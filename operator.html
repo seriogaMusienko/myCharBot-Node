@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operator desktop</title>
+
+    <style>
+        body {font-family: Arial;}
+        
+        /* Style the tab */
+        .tab {
+          height: 54px;
+          overflow: auto;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+        }
+        
+        /* Style the buttons inside the tab */
+        .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+          font-size: 17px;
+        }
+        
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: #ddd;
+        }
+        
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: #ccc;
+        }
+        .messagesClass{
+            height: 675px;
+            overflow: auto;
+        }
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
+        }
+        .timeP{
+            font-size: 14px;
+            color: gray;
+            float: right;
+        }
+        #loadin{
+            position: absolute;
+            z-index: 999;
+        }
+        </style>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+    <!-- Tab links -->
+    <div class="tab" id="addTab">
+        
+    </div>
+    <h1 id="loadin">Loading</h1>
+
+    <script>//TABS
+        function openCity(evt, cityName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(function(){
+            var socket = io.connect('ws://localhost:3000');
+            var $main = $("#addTab");
+            function loadOperatorOnly(){
+                socket.emit('loadOperator');
+            }
+            var hh = document.getElementById("loadin");
+            socket.emit('canIload');
+            socket.on('canLoadOperator', function(){
+                loadOperatorOnly();
+                hh.hidden = true;
+            });
+
+            window.onbeforeunload = function() {
+                socket.emit('closeOperator');
+            }
+            socket.on('add mess', function(data){
+                var now = new Date();
+                var $all_messages = $("#"+data.userID+"> #mess"+data.userID);
+                var hours = now.getHours();
+                var minutes = now.getMinutes();
+                var seconds = now.getSeconds();
+                if(now.getHours()<10){
+                    hours = "0"+now.getHours();
+                }
+                if(now.getMinutes()<10){
+                    minutes= "0"+now.getMinutes();
+                }
+                $all_messages.append('<div class="word alert alert-primary"><b>'+data.name+'</b>: '+data.mess+'<p class="timeP">'+hours+':'+minutes+':'+seconds+'</p></div>');
+            });
+
+            socket.on('homeLoadOperator', function(data){
+                // console.log(data.name);
+                // console.log(data.userId);
+                addName(data.name, data.userId, data.mess);
+            });
+
+            socket.on('add name',function(data){
+                addName(data.name, data.userID, "");
+            })
+
+            function addName($name,$userId, $mess){
+                button = document.createElement("button");
+                button.className = "tablinks";
+                button.setAttribute("onclick", "openCity(event, '"+$userId+"')");
+                button.append($name);
+                $main.append(button);
+
+                div = document.createElement("div");
+                div.className = "tabcontent";
+                div.id = $userId;
+                document.body.append(div);
+
+                divMes = document.createElement("div");
+                divMes.id = "mess"+$userId;
+                divMes.className = "messagesClass";
+                var $mainTab = $("#"+$userId);
+                $mainTab.append(divMes);
+
+                form = document.createElement("form");
+                form.id = "goOperator";
+
+                pp = document.createElement("p");
+                pp.append("Уникальный ID пользователя:")
+
+                p = document.createElement("p");
+                p.id = $userId+"ppp";
+                p.style.cssText = "color: red;";
+                p.append($userId);
+
+                label = document.createElement("label");
+                label.for = "message";
+                label.append("Сообщение");
+                
+                textarea = document.createElement("textarea");
+                textarea.name = "message";
+                textarea.id = $userId+"txtarr";
+                textarea.className = "form-control";
+                textarea.placeholder = "Введите сообщение";
+
+                input = document.createElement("input");
+                input.type = "button";
+                input.value = "Отправить";
+                input.className = "btn btn-danger";
+                input.onclick = function(event){
+                    var now = new Date();
+                    event.preventDefault();
+                    var txtar = $("#"+$userId+"txtarr");
+                    var idP = $("#"+$userId+"ppp");
+                    if($userId.includes("telegram")){
+                        socket.emit('send messOperatorTelegram', {mess: txtar.val(), userID: idP.text()});
+                    }else if($userId.includes("viber")){
+                        socket.emit('send messOperatorViber', {mess: txtar.val(), userID:idP.text()}) 
+                    }else if($userId.includes("facebook")){
+                        socket.emit('send messOperatorFacebook',{mess: txtar.val(), userID:idP.text()});
+                    }
+                    else{
+                        socket.emit('send messOperator', {mess: txtar.val(), userID: idP.text()});
+                    }
+                    var hours = now.getHours();
+                    var minutes = now.getMinutes();
+                    var seconds = now.getSeconds();
+                    if(now.getHours()<10){
+                        hours = "0"+now.getHours();
+                    }
+                    if(now.getMinutes()<10){
+                        minutes= "0"+now.getMinutes();
+                    }
+                    var $all_messages = $("#"+$userId+"> #mess"+$userId);
+                    $all_messages.append('<div class="word alert alert-success"><b>Оператор: </b>'+txtar.val()+'<p class="timeP">'+hours+':'+minutes+':'+seconds+'</p></div>');
+                    txtar.val("");
+                }
+
+                br = document.createElement("br");
+
+                var $all_messages = $("#"+$userId+"> #mess"+$userId);
+                $all_messages.append($mess);
+
+
+
+                form.append(pp);
+                form.append(p);
+                form.append(label);
+                form.append(textarea);
+                form.append(br);
+                form.append(input);
+                div.append(form);
+                
+                
+            }
+        })
+    </script>
+</body>
+</html>

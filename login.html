@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operator Login</title>
+    <style>
+        html{
+            background-color: #99bbff;
+        }
+        .container-fluid{
+            background-color: #99bbff;
+            margin: 250px auto 0 auto;
+        }
+        form{
+            background-color: #002b80;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .btn-submit{
+            padding: 13px 38px;
+            margin: 25px 0 28px 0;
+            font-size: 15px;
+            color: #fff;
+            background-color: #2ca8c6;
+            border: none;
+            border-bottom: 4px solid #6ee9fd;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-submit:hover{
+            background-color: #6ee9fd;
+        }
+        form input{
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        form p{
+            margin-top: 10px;
+            color: white;
+            font-size: 26px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <form class="col-lg-3 offset-lg-4 col-sm-8 offset-sm-2" id="loginForm">
+                <p>Вход</p>
+                <input class="col-lg-9 col-sm-8" type="text" id="username" placeholder="Введите логин"><br>
+                <input class="col-lg-9 col-sm-8" type="password" id="password"  placeholder="Введите пароль"><br>
+                <input class="btn-submit col-lg-3 col-sm-6" type="submit"  value="ВОЙТИ">
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+    <script type="text/javascript" src="jquery-ui.js"></script>
+    <script>
+        var $loginForm = $("#loginForm");
+        var $login = $("#username");
+        var $pass = $("#password");
+        var socket = io.connect();
+        $loginForm.submit(function(event){
+            event.preventDefault();
+            if($login.val() == "operator" && $pass.val() == "operator123"){
+                socket.emit('send login', {isTrue: 1});
+            }
+            else{
+                alert("False values!");
+            }
+        });
+
+        socket.on('add login', function(data){
+            window.location.reload("/operator");     
+        });
+    </script>
+</body>
+</html>

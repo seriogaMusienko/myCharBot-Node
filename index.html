@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .formsms{
+            padding: 1rem;
+            background: linear-gradient(to right, red, purple);
+            padding: 3px;
+        }
+        .goBackground{
+            background: #222;
+            color: white;
+            padding: 2rem;
+        }
+        .headerRealChat{
+            border-radius: 12px 51px 0px 0px;
+            -moz-border-radius: 12px 51px 0px 0px;
+            -webkit-border-radius: 12px 51px 0px 0px;
+            border: 0px solid #000000;
+        }
+        .buttonsP{
+            margin-top: 10px;
+        }
+        .word{
+            word-break: break-all;
+            hyphens: auto;
+        }
+        #all_mess{
+            overflow: auto;
+            max-height: 270px;
+        }
+        #textMesseges{
+            cursor: move;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;   
+            -khtml-user-select: none;    
+            -moz-user-select: none;      
+            -ms-user-select: none;       
+            user-select: none; 
+        }
+        .allChat > div {
+            position: fixed;
+            bottom: 0;
+            background: #222;
+            visibility: hidden;
+        }
+        .realChat{
+            transition: 0.2s;
+            visibility: hidden;
+        }
+
+
+        .wrapper > div {
+            position: fixed;
+            bottom: 0;
+            visibility: hidden;
+        }
+        .wrapper > div > div {
+            margin-left: 460%;
+            visibility: visible;
+            background-color: green;
+            height: 50px;
+            border-radius: 6px 30px 0px 0px;
+            -moz-border-radius: 6px 30px 0px 0px;
+            -webkit-border-radius: 6px 30px 0px 0px;
+            border: 0px solid #000000;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .unselectable {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;   
+            -khtml-user-select: none;    
+            -moz-user-select: none;      
+            -ms-user-select: none;       
+            user-select: none;           
+        }
+        .support{
+            margin-top: -10px;
+        }
+        .footerChat:hover{
+            background-color: #00cc00;
+        }
+
+        #closeX{
+            margin-top: 340px;
+            background-color: #222;
+        }
+        #message{
+            resize: none;
+            height: 90px;
+        }
+        .timeP{
+            font-size: 11px;
+            color: gray;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row wrapper">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-2">
+                <div class="col-12 footerChat" id="footerChat">
+                    <h6 class="unselectable">Оператор</h6>
+                    <p class="unselectable support">Customer support</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row allChat" id="draggable">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-3 col-lg-4 col-md-5 col-sm-7 realChat" id="realChat">
+                    
+                    <div class="col-12 col-sm-12 goBackground headerRealChat">
+                        <h5 id="textMesseges">Сообщения:</h5>
+                        <div id="all_mess"></div>
+                    </div>
+                    
+                    <div class="col-12 col-sm-12 formsms">
+                        <div class="goBackground"> 
+                            <form id="nameForm">
+                                <label for="message">Имя</label>
+                                <input type="text" name="name" id="name" placeholder="Введите имя" class="form-control"></input>
+                                <input type="submit" value="Ввести имя" class="col-sm-12 btn btn-danger buttonsP" id="goName">
+                            </form>
+                            <br id="brForm"> 
+                            <form id="messForm">
+                                <textarea name="message" id="message" class="form-control" placeholder="Введите сообщение" disabled="true"></textarea>
+                                <input type="submit" value="Отправить" class="col-sm-12 btn btn-danger buttonsP" disabled="true" id="goMess">
+                                <input type="button" value="Скрыть окно" class="col-sm-12 btn btn-danger buttonsP" id="goClose">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+    <script type="text/javascript" src="jquery-ui.js"></script>
+    <script>
+        $(function(){
+            var $idSession = str_rand();
+            var $messages = new Array();
+            var $messagesTime = new Array();
+            var $openFooter = 0;
+            var socket = io.connect('ws://localhost:3000');
+            var $form = $("#messForm");
+            var $nameForm = $("#nameForm");
+            var $name = $("#name");
+            var $textarea = $("#message");
+            var $all_messages = $("#all_mess");
+            var $goMess = $("#goMess");
+            var $goName = $("#goName");
+            var $names = new Array();
+            function startPage(){
+                if(getCookie("userId") != null){
+
+                    $userId = getCookie("userId");
+                    $name.val(getCookie("name"));
+
+                    socket.emit('loadUser', {userID: $userId});
+
+                    $goMess.prop("disabled", false);
+                    $textarea.prop("disabled", false);
+                    // $name.prop("disabled", true);
+                    // $goName.prop("disabled", true);
+                    document.getElementById("nameForm").remove();
+                    document.getElementById("brForm").remove();
+                }
+            }
+
+            window.onbeforeunload = function() {
+                if($messages[0] != null){
+                    socket.emit('closeWindow',{mess: $messages, userId: getCookie("userId"), name: $names, timeMess: $messagesTime, operatorId: 1, sessionId: $idSession});
+                }
+            }
+            
+
+
+            function str_rand() {//функция для генерации ID
+                var result       = '';
+                var words        = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
+                var max_position = words.length - 1;
+                    for( i = 0; i < 15; ++i ) {
+                        position = Math.floor ( Math.random() * max_position );
+                        result = result + words.substring(position, position + 1);
+                    }
+                return result;
+            }
+            
+            var footerChat = document.getElementById('footerChat');
+            var realChat = document.getElementById('realChat');
+            $('.footerChat').on('click', function(e){
+                if($openFooter == 0){
+                    startPage();
+                }
+                $openFooter++;
+                footerChat.style.visibility = "hidden";
+                realChat.style.visibility = "visible";
+            });
+
+            $("#goClose").on('click', function(){
+                footerChat.style.visibility = "visible";
+                realChat.style.visibility = "hidden";
+            })
+            
+            var textMess = document.getElementById('textMesseges');
+            var draggableDiv = document.getElementById('draggable');
+
+            textMess.onmousedown = function(e) { 
+                if (e.which != 1) { // если клик правой кнопкой мыши
+                    return; // то он не запускает перенос
+                }
+                // 2. разместить на том же месте, но в абсолютных координатах
+                draggableDiv.style.position = 'absolute';
+                moveAt(e);
+                // переместим в body, чтобы блок был точно не внутри position:relative
+                document.body.appendChild(draggableDiv);
+
+                draggableDiv.style.zIndex = 1000; // показывать блок над другими элементами
+
+                // передвинуть блок под координаты курсора
+                // и сдвинуть на половину ширины/высоты для центрирования
+                function moveAt(e) {
+                    draggableDiv.style.left = e.pageX - textMess.offsetWidth / 2 + 'px';
+                    //$all_messages.style.height = "300px";
+                }
+
+                // 3, перемещать по экрану
+                document.onmousemove = function(e) {
+                    moveAt(e);
+                }
+
+                // 4. отследить окончание переноса
+                draggableDiv.onmouseup = function() {
+                    document.onmousemove = null;
+                    draggableDiv.onmouseup = null;
+                }
+                draggableDiv.ondragstart = function() {
+                    return false;
+                };
+                AutoScroll();
+            }
+            
+
+
+            $form.submit(function(event){
+                event.preventDefault();//убираю перезапуск страницы при нажатии на кнопку
+                if($textarea.val().includes("<") && $textarea.val().includes(">")){
+                    alert("В сообщении присутствуют запрещённые символы!");
+                }
+                else{
+                    var now = new Date();
+                    var hours = now.getHours();
+                    var minutes = now.getMinutes();
+                    if(now.getHours()<10){
+                        hours = "0"+now.getHours();
+                    }
+                    if(now.getMinutes()<10){
+                        minutes= "0"+now.getMinutes();
+                    }
+                    $toTable = '<div class="word alert alert-primary"><b>'+$name.val()+'</b>: '+$textarea.val()+'<p class="timeP">'+hours+':'+minutes+'</p></div>';
+                    $messages.push($textarea.val());
+                    $messagesTime.push(hours+':'+minutes);
+                    $all_messages.append($toTable);
+                    $names.push($name.val());
+                    socket.emit('send mess', {mess: $textarea.val(), name: $name.val(), userID: $userId});//вызываем событие внутри соединения
+                    $textarea.val('');//после нажатия кнопки отправить очищаем textarea
+                    
+
+                    AutoScroll();
+                }
+            });
+
+            $nameForm.submit(function(event){
+                $userId = str_rand();
+                //COOKIES
+                let date = new Date(Date.now() + 86400e3);
+                date = date.toUTCString();
+                document.cookie = "userId="+$userId+"; expires=" + date;
+
+                let date2 = new Date(Date.now() + 86400e3);
+                date2 = date2.toUTCString();
+                document.cookie = "name="+$name.val()+"; expires=" + date2;
+
+                socket.emit('new name', {name: $name.val(), userId: $userId});
+
+                event.preventDefault();
+                $goMess.prop("disabled", false);
+                $textarea.prop("disabled", false);
+                document.getElementById("nameForm").remove();
+                document.getElementById("brForm").remove();
+            });
+
+            socket.on('add messOperator', function(data){
+                if($userId == data.userID){
+                    var now = new Date();
+                    var hours = now.getHours();
+                    var minutes = now.getMinutes();
+                    if(now.getHours()<10){
+                        hours = "0"+now.getHours();
+                    }
+                    if(now.getMinutes()<10){
+                        minutes= "0"+now.getMinutes();
+                    }
+                    $toTable = '<div class="word alert alert-success"><b>Оператор: </b>'+data.mess+'<p class="timeP">'+hours+':'+minutes+'</p></div>';
+                    $messages.push(data.mess);
+                    $names.push("Оператор");
+                    $messagesTime.push(hours+':'+minutes);
+                    $all_messages.append($toTable);
+                    
+                    AutoScroll();
+                }
+            });
+            
+            socket.on('homeLoadUser', function(data){
+                $all_messages.append(data.oldMess);
+                AutoScroll();
+            });
+        })
+
+        function getCookie(name) {
+            let matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+
+        function AutoScroll(){
+            var block = document.getElementById("all_mess");//Автоматическая прокрутка вниз
+            block.scrollTop = block.scrollHeight;
+        }
+    </script>
+</body>
+</html>

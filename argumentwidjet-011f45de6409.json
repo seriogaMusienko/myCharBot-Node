@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "argumentwidjet",
+  "private_key_id": "011f45de64098a6fb79e559075b541dff12cc0ce",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCT/qwpJTX6XjrO\nh4tVEX33E1nIwPn7unJZot9kAuLAoFm3ISQyCP7Y5lxXuxEOfILYQg9Zqsco/FoM\nPHgEqtlPtFx7ArnmlpV4T+tym+mpL8BqAvao43RmCfphtJQMjyS5/FsRJVcuDWl1\niAKMzfM08bIcMJOGmFdy/r47RMIIrvaIwMKPMdlqlzaTOXhqHhbnYDq0U7bolk+N\nuZW7w2z65rl/06sexGxv9PugXGaIgnAcshpjH+NMpI143IzhW+KvYX6sRrQ5IVnb\nBpzNi33nykJ10LAF0NMYe5n8oRJl1q0y1yfkrCUmRkdRSzAdhe1gfSGOmbEVU2qh\ngdj08UHlAgMBAAECggEALApQ1CuxHPDWoige0/FRIWn+QWn/2iO5LKh1vs7HCJiP\nKhpwKX2YzRX8K9VMtZli3JUH+WCDRNSXvWVvN8BZy8i57pc4mAB+uV9bCu+PwJun\nsERyf360YDse6d1xYy1juf75YKhSga9XDzUqwRj2g25bWN0xwY9rEprxJDUJYsiu\nOYWbSgNAaz4x4YSj5VsA/9Ymt4ki/zi/9c2svUUd20hBeLD+TyiXzn35qBgJsHPc\nj4y/WZPZBIGU5SKsRoyDSJtF156sKv6eeDMzsDGHB37PFq6DZXRoNaI6YuQ6jLm5\n77RACwkIIlfx0FQWAJhs/6zacqn2QBqIgHKxbc+4nwKBgQDLguV79658FyrZbZNV\nN/pMRTzOcWGjOXKrJIMjjt7+PHpgZt72UnAV/dOFtrZlEU80nageNUec93AdUKtr\nJIj+0pPFJPqKvNKNgGc3oHc8TljbCh1sRYCk9kFUW2PevGrDr8tE0nijMYvy93K6\nlgo4REXQ6B+PWSkzKw1xgS1nYwKBgQC6KjnNZKJbb4ud0ZLFOs38QPKXbqOgNJY2\n9hq8P8HL7itjW0cxfCkWFCyGOLNMlr4T+TQYpXAfAEm+Zr7XH5+S+1yFsyjawCD3\nrIRKWMtPKlQ/to2LaMnDMP7rj4X4LfgzIgaeuV9/u4+RWlbPh2K/A0pupOjeRTjF\nx9zi4yyoFwKBgQDF6/q1Us+eHYXtybSFJ5jEvn2BpSE49jEAItVrKpLSnQzDXqiu\n1MPvj1k87NJ8fpYSbNXI8zY/gSHHUOI1pGWbtj5CeFE1xqfbOCqqHeR4gRXHiRHO\nb9XKGTi2Ct+ZCpOm1vwQZcUvqYsa8+7fafZsfHGN14KCDkuUWOWNIv1+UwKBgAHX\nOQsW26Qbzj2ZPOJGWpML8Vod9fA3lOSmOk1yM/BYQoWQ+Xs7xww41tfc56jyNJ7t\n793uhNVJo3EGgwyNe35wjdGkm9rN24WXZxd1GU2HFZ4rp+qg9p2/dkXN/X0etz2K\nMJaRLqiMqja9te4HYKqS1cGST9sixBTwjPaRWHexAoGBAJOcbak+RSYQbbtXqrs5\nBH14oASxCkwRoFOU9/gb3B7az52aKD6d9g5jI6gqN/z9BpfEhDRdiT4V82ZuUXJe\n2PiB/vqEhNj8pvH8V423lrwwXhCxJBMD0GPWw9db/nFc8CbM+1NRNq4xhIdwEiAs\n2WzSsc8okGno/b1CwdaQBcnb\n-----END PRIVATE KEY-----\n",
+  "client_email": "widjet-argumentagency@argumentwidjet.iam.gserviceaccount.com",
+  "client_id": "110720216799126221399",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/widjet-argumentagency%40argumentwidjet.iam.gserviceaccount.com"
+}

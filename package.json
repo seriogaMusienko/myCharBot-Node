@@ -1,0 +1,31 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sergei Musienko",
+  "license": "ISC",
+  "dependencies": {
+    "@open-wa/wa-automate": "^1.9.99",
+    "body-parser": "^1.19.0",
+    "bootbot": "^1.0.16",
+    "config": "^3.3.1",
+    "express": "^4.17.1",
+    "fb-messenger-bot-api": "^4.4.0",
+    "git-init": "^1.0.0",
+    "google-apis": "^1.0.0",
+    "google-spreadsheet": "^3.0.11",
+    "js-yaml": "^3.14.0",
+    "node-telegram-bot-api": "^0.50.0",
+    "node-vk-bot-api": "^3.3.4",
+    "request": "^2.88.2",
+    "socket.io": "^2.3.0",
+    "sulla": "^2.3.14",
+    "viber-bot": "^1.0.16",
+    "winston": "^2.0.0",
+    "winston-console-formatter": "^1.0.0-beta.3"
+  }
+}
